@@ -10,17 +10,39 @@ Example output:
 
 const express = require('express');
 let app = express();
+let minDate = new Date('1970-01-01 00:00:01');
+let maxDate = new Date('2038-01-19 03:14:07');
+
+let formatDates = function (date) {
+    let months = [
+      "January", "February", "March", "April", "May", "June", "July", "August",
+      "September", "October", "November", "December"
+    ];
+    
+    let day = date.getDate();
+    let year = date.getFullYear();
+    
+    return months[date.getMonth()] + ' ' + day + ', ' + year;
+};
+
 app.get('/:date', function (req, res) {
-    console.log(req.params.date);
     if ( (new Date(req.params.date).getTime() > 0) ) {
         let timestamp = new Date(req.params.date).getTime();
-        //console.log(new Date(req.params.date).getTime());
         res.json({
             unix: timestamp,
-            natural: timestamp
+            natural: req.params.date
+        });
+    } else if (parseInt(req.params.date) > minDate && parseInt(req.params.date) < maxDate) {
+        res.json({
+            unix: parseInt(req.params.date),
+            natural: formatDates(new Date(parseInt(req.params.date)))
+        });
+    } else {
+        res.json({
+            unix: null,
+            natural: null
         });
     }
     res.end();
 });
-//app.listen(process.env.PORT || 3000);
-app.listen(3000);
+app.listen(process.env.PORT || 3000);
