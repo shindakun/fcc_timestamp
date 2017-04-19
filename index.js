@@ -25,6 +25,17 @@ let formatDates = function (date) {
     return months[date.getMonth()] + ' ' + day + ', ' + year;
 };
 
+app.get('/', function (req, res) {
+  let url = req.protocol + '://' + req.get('host') + req.originalUrl;
+  res.send(`<pre>
+    Example usage:
+        ${url}December%2015,%202015
+        ${url}1450137600000
+    Example output:
+        { "unix": 1450137600, "natural": "December 15, 2015" }
+      </pre>`);
+});
+
 app.get('/:date', function (req, res) {
     if ( (new Date(req.params.date).getTime() > 0) ) {
         let timestamp = new Date(req.params.date).getTime();
